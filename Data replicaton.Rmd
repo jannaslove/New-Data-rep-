@@ -1,0 +1,110 @@
+---
+title: "Data replaiction"
+author: "Janna M"
+date: "3/30/2021"
+output: html_document
+---
+Description 
+The authors investigated the relationship between body and horn size , larval and adult nutrition and fitness related traits in the horned beetle.
+
+They find that a possible mechanism by which larval nutrition could effect adult weight gain and strength is through a insulin like signaling pathway. 
+
+I used the data that they provided.
+
+
+
+I will be recreating the sexual dimorphism in in pronotum length vs Elytra in horned beetles 
+
+Elytra is a measure of body size. The pronotum it is a part of the chest cavity of thorax.
+
+When beetles are not flying their wings are covered by a pair of modified wings called the elytra for protection . When beetles fly the elytra opens up and the wings move the area above the elytra is the pronotum.
+
+
+The data files were separated. In the original code they were apart of one text file. I decided to load the separate files.
+
+For this reason i had to assign sex and bind_rows to combine them The rest of the code allowed me to generate a file.
+
+I do not understand how 26 rows are missing, but this is why my results differ from the authors.
+
+Some of the data is missing , therefore i did not accomplish the task of generating graph just like theirs.
+
+In the future attaching the original data files would be helpful. However the code is sufficient enough to attempt to replicate this analysis using my own data.
+
+```{r}
+#descriptive statistics and visualization 
+# Read in the table
+FemaleBeetle <- read.table("C://Documents and Settings/JSG-BS05V2/Desktop/Class/Beetle_data_exploratory.txt/femaledata.txt")
+#combine male a female data . ( These files were separate but the original code read this in as one file . i had to combine them )
+MaleBeetle <- read.table("C://Documents and Settings/JSG-BS05V2/Desktop/Class/Beetle_data_exploratory.txt/maledata.txt")
+FemaleBeetle$Sex <- "female"
+MaleBeetle$Sex <- "male"
+#manipulate dataset
+library(dplyr)
+# combine male and females 
+Beetle<- bind_rows(FemaleBeetle,MaleBeetle)
+# downloading this data set was difficult and i was having trouble locating it
+
+library(ggplot2)
+
+
+library(scales)
+
+p1 <- ggplot(data = Beetle, aes(x = Elytra, y = lnProt, shape = Sex,
+colour = Sex))
+p1 <- p1 + geom_point() + scale_shape_manual(values = c(16, 17)) +
+scale_color_manual(values = c("darkred", "steelblue")) +
+theme_bw()
+p1 <- p1 + xlab("elytra (mm)") + ylab("Pronotum length (mm)")
+p1
+```
+ inferential statistical analysis
+ 
+ Path analysis for male performance.
+ 
+ This Code was easy to replicate i just had to change the male beetle file and data name.
+```{r}
+library(lavaan)
+maledata <- read.table("C://Documents and Settings/JSG-BS05V2/Desktop/Class/Beetle_data_exploratory.txt/maledata.txt")
+
+##Specify the model
+Path.full.model.perform.male<-'#Regressions
+7
+lnPerform~lnProt+Fat.trans+lnWtgain+Elytra+Horn+Ec.Weight.trans+Adult.diet
+lnProt~Elytra+Ec.Weight.trans+lnWtgain+Horn+Adult.diet
+Fat.trans~Elytra+Ec.Weight.trans+lnWtgain+Horn+Adult.diet
+lnWtgain~Elytra+Ec.Weight.trans+EndBBweight+Horn+Adult.diet
+Ec.Weight.trans~EndBBweight +Developmenttime
+Elytra~EndBBweight +Developmenttime
+Developmenttime~EndBBweight
+Horn~ EndBBweight+Developmenttime
+#covariances
+Horn~~Elytra
+Horn~~Ec.Weight.trans
+lnProt~~Fat.trans
+Elytra~~Ec.Weight.trans
+'
+## Fit the model and check the summary
+Male.performance.full.model <- sem(Path.full.model.perform.male,
+data = maledata, missing = "fiml")
+summary(Male.performance.full.model, standardized = TRUE)
+```
+Path analysis for female fat content
+
+I replace the data female data. with the data female beetle . the rest of the code was simple 
+```{r}
+#Specify the full model
+Path.full.model.fat<-'#Regressions
+lnProt~Elytra+Ec.Weight.trans+lnWtgain+ Adult.diet
+Fat.trans~Elytra+Ec.Weight.trans+lnWtgain +Adult.diet
+lnWtgain~Elytra+Ec.Weight.trans+EndBBweight +Adult.diet
+Ec.Weight.trans~EndBBweight+Developmenttime
+Elytra~EndBBweight+Developmenttime
+Developmenttime~EndBBweight
+#covariances
+lnProt~~Fat.trans
+Elytra~~Ec.Weight.trans'
+# Fit the model and check the summary
+female.fat.full.model <- sem(Path.full.model.fat, data = FemaleBeetle,
+missing = "fiml")
+summary(female.fat.full.model, standardized = TRUE)
+```
