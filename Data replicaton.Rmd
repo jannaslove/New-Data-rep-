@@ -2,22 +2,26 @@
 title: "Data replaiction"
 author: "Janna M"
 date: "3/30/2021"
-output: html_document
+output:
+  html_document: default
+  
 ---
 Description 
+
 The authors investigated the relationship between body and horn size , larval and adult nutrition and fitness related traits in the horned beetle.
 
-They find that a possible mechanism by which larval nutrition could effect adult weight gain and strength is through a insulin like signaling pathway. 
+They find that there is a possible mechanism by which larval nutrition could effect adult weight gain and strength and it is through a insulin like signaling pathway. 
 
-I used the data that they provided.
+I used the data that they provided.The data could have been more detailed to match the code but i was able to overcome that hurdle.
+
+I will be recreating the sexual dimorphism in in pronotum length vs Elytra in horned beetles. This a a visual and descriptive statistical analysis.
 
 
-
-I will be recreating the sexual dimorphism in in pronotum length vs Elytra in horned beetles 
+I will be recreating a Inferential statistical analysis or a Path analysis for male  beetle performance, and a Path analysis for female fat content.
 
 Elytra is a measure of body size. The pronotum it is a part of the chest cavity of thorax.
 
-When beetles are not flying their wings are covered by a pair of modified wings called the elytra for protection . When beetles fly the elytra opens up and the wings move the area above the elytra is the pronotum.
+When beetles are not flying their wings are covered by a pair of modified wings called the elytra for protection . When beetles fly the elytra opens up and the wings move. The area above the elytra is the pronotum.
 
 
 The data files were separated. In the original code they were apart of one text file. I decided to load the separate files.
@@ -57,7 +61,7 @@ theme_bw()
 p1 <- p1 + xlab("elytra (mm)") + ylab("Pronotum length (mm)")
 p1
 ```
- inferential statistical analysis
+ Inferential statistical analysis
  
  Path analysis for male performance.
  
@@ -90,7 +94,7 @@ summary(Male.performance.full.model, standardized = TRUE)
 ```
 Path analysis for female fat content
 
-I replace the data female data. with the data female beetle . the rest of the code was simple 
+I replaced the data female data. with the data female beetle . the rest of the code was simple 
 ```{r}
 #Specify the full model
 Path.full.model.fat<-'#Regressions
@@ -107,4 +111,7 @@ Elytra~~Ec.Weight.trans'
 female.fat.full.model <- sem(Path.full.model.fat, data = FemaleBeetle,
 missing = "fiml")
 summary(female.fat.full.model, standardized = TRUE)
+
 ```
+
+
